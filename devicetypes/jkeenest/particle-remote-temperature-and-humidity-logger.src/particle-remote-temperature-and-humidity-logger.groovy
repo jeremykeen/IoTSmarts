@@ -19,7 +19,7 @@ preferences {
     input name: "token", type: "password", title: "Access Token", required: true
     input name: "particleTemperatureVar", type: "text", title: "Particle Temperature Variable", required: true, defaultValue: "temperature"
     input name: "particlepHVar", type: "text", title: "Spark pH Variable", required: true, defaultValue: "ph"
-    input name: "particleBatterLevelVar", type: "text", title: "Spark Heat Index Variable", required: true, defaultValue: "batteryLevel"
+    input name: "particleBatteryLevelVar", type: "text", title: "Spark Heat Index Variable", required: true, defaultValue: "batteryLevel"
 }
 
 metadata {
@@ -27,7 +27,6 @@ metadata {
         capability "Polling"
         capability "Sensor"
         capability "Refresh"
-        capability "Relative Humidity Measurement"
         capability "Temperature Measurement"
 
         attribute "temperature", "number"
@@ -48,21 +47,11 @@ metadata {
             )
         }
 
-        valueTile("heatIndex", "device.heatIndex", width: 2, height: 2) {
-            state("heatIndex", label:'${currentValue}°', unit:"F",
-                backgroundColors:[
-                    [value: 31, color: "#153591"],
-                    [value: 44, color: "#1e9cbb"],
-                    [value: 59, color: "#90d2a7"],
-                    [value: 74, color: "#44b621"],
-                    [value: 84, color: "#f1d801"],
-                    [value: 95, color: "#d04e00"],
-                    [value: 96, color: "#bc2323"]
-                ]
-            )
+        valueTile("heatIndex", "device.pH", width: 2, height: 2) {
+            state "heatIndex", label:'${currentValue}'
         }
 
-        valueTile("humidity", "device.humidity", width: 2, height: 2) {
+        valueTile("humidity", "device.batteryLevel", width: 2, height: 2) {
             state "default", label:'${currentValue}%'
         }
 
@@ -71,7 +60,7 @@ metadata {
         }
 
         main "temperature"
-        details(["temperature", "humidity", "heatIndex", "refresh"])
+        details(["temperature", "pH", "batteryLevel", "refresh"])
     }
 }
 
@@ -90,8 +79,8 @@ def refresh() {
 
 def getAll() {
     getTemperature()
-    getHumidity()
-    getHeatIndex()
+    getPH()
+    getBattery()
 }
 
 def parse(String description) {
@@ -110,22 +99,22 @@ private getTemperature() {
     httpGet("https://api.particle.io/v1/devices/${deviceId}/${particleTemperatureVar}?access_token=${token}", closure)
 }
 
-private getHumidity() {
+private getPH() {
     def closure = { response ->
-        log.debug "Humidity request was successful, $response.data"
+        log.debug "pH request was successful, $response.data"
 
-        sendEvent(name: "humidity", value: response.data.result)
+        sendEvent(name: "ph", value: response.data.result)
     }
 
     httpGet("https://api.particle.io/v1/devices/${deviceId}/${particlepHVar}?access_token=${token}", closure)
 }
 
-private getHeatIndex() {
+private getBattery() {
     def closure = { response ->
-        log.debug "Heat Index request was successful, $response.data"
+        log.debug "Battery Level request was successful, $response.data"
 
-        sendEvent(name: "heatIndex", value: response.data.result)
+        sendEvent(name: "batteryLevel", value: response.data.result)
     }
 
-    httpGet("https://api.particle.io/v1/devices/${deviceId}/${particleBatterLevelVar}?access_token=${token}", closure)
+    httpGet("https://api.particle.io/v1/devices/${deviceId}/${particleBatteryLevelVar}?access_token=${token}", closure)
 }
