@@ -17,9 +17,9 @@
 preferences {
     input name: "deviceId", type: "text", title: "Device ID", required: true
     input name: "token", type: "password", title: "Access Token", required: true
-    input name: "sparkTemperatureVar", type: "text", title: "Spark Temperature Variable", required: true, defaultValue: "temperature"
-    input name: "sparkHumidityVar", type: "text", title: "Spark Humidity Variable", required: true, defaultValue: "humidity"
-    input name: "sparkHeatIndexVar", type: "text", title: "Spark Heat Index Variable", required: true, defaultValue: "heatIndex"
+    input name: "particleTemperatureVar", type: "text", title: "Particle Temperature Variable", required: true, defaultValue: "temperature"
+    input name: "particlepHVar", type: "text", title: "Spark pH Variable", required: true, defaultValue: "ph"
+    input name: "particleBatterLevelVar", type: "text", title: "Spark Heat Index Variable", required: true, defaultValue: "batteryLevel"
 }
 
 metadata {
@@ -36,7 +36,7 @@ metadata {
     tiles(scale: 2) {
         valueTile("temperature", "device.temperature", width: 2, height: 2) {
             state("temperature", label:'${currentValue}°', unit:"F",
-                backgroundColors:[    
+                backgroundColors:[
                     [value: 31, color: "#153591"],
                     [value: 44, color: "#1e9cbb"],
                     [value: 59, color: "#90d2a7"],
@@ -50,7 +50,7 @@ metadata {
 
         valueTile("heatIndex", "device.heatIndex", width: 2, height: 2) {
             state("heatIndex", label:'${currentValue}°', unit:"F",
-                backgroundColors:[    
+                backgroundColors:[
                     [value: 31, color: "#153591"],
                     [value: 44, color: "#1e9cbb"],
                     [value: 59, color: "#90d2a7"],
@@ -107,7 +107,7 @@ private getTemperature() {
         sendEvent(name: "temperature", value: response.data.result)
     }
 
-    httpGet("https://api.spark.io/v1/devices/${deviceId}/${sparkTemperatureVar}?access_token=${token}", closure)
+    httpGet("https://api.particle.io/v1/devices/${deviceId}/${particleTemperatureVar}?access_token=${token}", closure)
 }
 
 private getHumidity() {
@@ -117,7 +117,7 @@ private getHumidity() {
         sendEvent(name: "humidity", value: response.data.result)
     }
 
-    httpGet("https://api.spark.io/v1/devices/${deviceId}/${sparkHumidityVar}?access_token=${token}", closure)
+    httpGet("https://api.particle.io/v1/devices/${deviceId}/${particlepHVar}?access_token=${token}", closure)
 }
 
 private getHeatIndex() {
@@ -127,5 +127,5 @@ private getHeatIndex() {
         sendEvent(name: "heatIndex", value: response.data.result)
     }
 
-    httpGet("https://api.spark.io/v1/devices/${deviceId}/${sparkHeatIndexVar}?access_token=${token}", closure)
+    httpGet("https://api.particle.io/v1/devices/${deviceId}/${particleBatterLevelVar}?access_token=${token}", closure)
 }
