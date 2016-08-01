@@ -47,11 +47,11 @@ metadata {
             )
         }
 
-        valueTile("heatIndex", "device.pH", width: 2, height: 2) {
-            state "heatIndex", label:'${currentValue}'
+        valueTile("ph", "device.ph", width: 2, height: 2) {
+            state "default", label:'${currentValue}'
         }
 
-        valueTile("humidity", "device.batteryLevel", width: 2, height: 2) {
+        valueTile("battery", "device.battery", width: 2, height: 2) {
             state "default", label:'${currentValue}%'
         }
 
@@ -113,7 +113,7 @@ private getBattery() {
     def closure = { response ->
         log.debug "Battery Level request was successful, $response.data"
 
-        sendEvent(name: "batteryLevel", value: response.data.result)
+        sendEvent(name: "battery", value: response.data.result)
     }
 
     httpGet("https://api.particle.io/v1/devices/${deviceId}/${BattVar}?access_token=${token}", closure)
