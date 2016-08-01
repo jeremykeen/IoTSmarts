@@ -17,9 +17,9 @@
 preferences {
     input name: "deviceId", type: "text", title: "Device ID", required: true
     input name: "token", type: "password", title: "Access Token", required: true
-    input name: "particleTemperatureVar", type: "text", title: "Particle Temperature Variable", required: true, defaultValue: "temperature"
-    input name: "particlepHVar", type: "text", title: "Spark pH Variable", required: true, defaultValue: "ph"
-    input name: "particleBatteryLevelVar", type: "text", title: "Spark Heat Index Variable", required: true, defaultValue: "batteryLevel"
+    input name: "TempVar", type: "text", title: "Particle Temperature Variable", required: true, defaultValue: "temperature"
+    input name: "pHVar", type: "text", title: "Spark pH Variable", required: true, defaultValue: "ph"
+    input name: "BattVar", type: "text", title: "Spark Heat Index Variable", required: true, defaultValue: "batteryLevel"
 }
 
 metadata {
@@ -96,7 +96,7 @@ private getTemperature() {
         sendEvent(name: "temperature", value: response.data.result)
     }
 
-    httpGet("https://api.particle.io/v1/devices/${deviceId}/${particleTemperatureVar}?access_token=${token}", closure)
+    httpGet("https://api.particle.io/v1/devices/${deviceId}/${TempVar}?access_token=${token}", closure)
 }
 
 private getPH() {
@@ -106,7 +106,7 @@ private getPH() {
         sendEvent(name: "ph", value: response.data.result)
     }
 
-    httpGet("https://api.particle.io/v1/devices/${deviceId}/${particlepHVar}?access_token=${token}", closure)
+    httpGet("https://api.particle.io/v1/devices/${deviceId}/${pHVar}?access_token=${token}", closure)
 }
 
 private getBattery() {
@@ -116,5 +116,5 @@ private getBattery() {
         sendEvent(name: "batteryLevel", value: response.data.result)
     }
 
-    httpGet("https://api.particle.io/v1/devices/${deviceId}/${particleBatteryLevelVar}?access_token=${token}", closure)
+    httpGet("https://api.particle.io/v1/devices/${deviceId}/${BattVar}?access_token=${token}", closure)
 }
