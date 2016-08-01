@@ -1,6 +1,8 @@
 /**
  * Particle (Spark) Core / Photon / Electron Remote Pool Temp and pH Logger
- * 
+ * Work in progress to capture pool temp and pH level from photon
+ * Get it here: https://github.com/jkeenest/IoTSmarts/
+ *
  * Modified from Nic Jansma's code:
  * Author: Nic Jansma
  *
@@ -16,16 +18,14 @@ preferences {
     input name: "deviceId", type: "text", title: "Device ID", required: true
     input name: "token", type: "password", title: "Access Token", required: true
     input name: "sparkTemperatureVar", type: "text", title: "Spark Temperature Variable", required: true, defaultValue: "temperature"
-    input name: "sparkHumidityVar", type: "text", title: "Spark Humidity Variable", required: true, defaultValue: "humidity"
-    input name: "sparkHeatIndexVar", type: "text", title: "Spark Heat Index Variable", required: true, defaultValue: "heatIndex"
+    input name: "sparkpHVar", type: "text", title: "Spark pH Variable", required: true, defaultValue: "ph"
 }
 
 metadata {
-    definition (name: "Particle Remote Temperature and Humidity Logger", namespace: "nicjansma", author: "Nic Jansma") {
+    definition (name: "Particle Remote Pool Temp and pH Monitor", namespace: "jkeenest", author: "Jeremy Keen") {
         capability "Polling"
         capability "Sensor"
         capability "Refresh"
-        capability "Relative Humidity Measurement"
         capability "Temperature Measurement"
 
         attribute "temperature", "number"
@@ -115,7 +115,7 @@ private getHumidity() {
         sendEvent(name: "humidity", value: response.data.result)
     }
 
-    httpGet("https://api.spark.io/v1/devices/${deviceId}/${sparkHumidityVar}?access_token=${token}", closure)
+    httpGet("https://api.spark.io/v1/devices/${deviceId}/${sparkpHVar}?access_token=${token}", closure)
 }
 
 private getHeatIndex() {
