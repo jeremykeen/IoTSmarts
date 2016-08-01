@@ -23,7 +23,7 @@ preferences {
 }
 
 metadata {
-    definition (name: "Particle Remote Temperature and Humidity Logger", namespace: "jkeenest", author: "Jeremy Keen") {
+    definition (name: "Particle Pool Temperature and pH Logger", namespace: "jkeenest", author: "Jeremy Keen") {
         capability "Polling"
         capability "Sensor"
         capability "Refresh"
