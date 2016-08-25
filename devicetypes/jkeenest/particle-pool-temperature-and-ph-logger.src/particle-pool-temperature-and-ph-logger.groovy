@@ -18,8 +18,8 @@ preferences {
     input name: "deviceId", type: "text", title: "Device ID", required: true
     input name: "token", type: "password", title: "Access Token", required: true
     input name: "TempVar", type: "text", title: "Particle Temperature Variable", required: true, defaultValue: "temperature"
-    input name: "pHVar", type: "text", title: "Spark pH Variable", required: true, defaultValue: "ph"
-    input name: "BattVar", type: "text", title: "Spark Heat Index Variable", required: true, defaultValue: "batteryLevel"
+    input name: "pHVar", type: "text", title: "Particle pH Variable", required: true, defaultValue: "ph"
+    input name: "BattVar", type: "text", title: "Particle Battery Level Variable", required: true, defaultValue: "batteryLevel"
 }
 
 metadata {
@@ -28,8 +28,10 @@ metadata {
         capability "Sensor"
         capability "Refresh"
         capability "Temperature Measurement"
+        capability "pH Measurement"
 
         attribute "temperature", "number"
+        attribute "pH", "number"
     }
 
     tiles(scale: 2) {
@@ -48,7 +50,17 @@ metadata {
         }
 
         valueTile("ph", "device.ph", width: 2, height: 2) {
-            state "default", label:'${currentValue}'
+            state( "pH", label:'${currentValue}',
+            	backgroundColors:[
+                	[value: 7.1, color: "#153591"],
+                    [value: 7.2, color: "#1e9cbb"],
+                    [value: 7.3, color: "#90d2a7"],
+                    [value: 7.5, color: "#44b621"],
+                    [value: 7.7, color: "#f1d801"],
+                    [value: 7.8, color: "#d04e00"],
+                    [value: 8.0, color: "#bc2323"]
+				]
+			)
         }
 
         valueTile("battery", "device.battery", width: 2, height: 2) {
@@ -59,8 +71,8 @@ metadata {
             state "default", action:"refresh.refresh", icon:"st.secondary.refresh"
         }
 
-        main "temperature"
-        details(["temperature", "pH", "batteryLevel", "refresh"])
+        main("temperature")
+        details(["temperature", "ph", "battery", "refresh"])
     }
 }
 
