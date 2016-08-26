@@ -15,40 +15,52 @@
  */
 
 preferences {
-    input name: "deviceId", type: "text", title: "Device ID", required: true
-    input name: "token", type: "password", title: "Access Token", required: true
-    input name: "TempVar", type: "text", title: "Particle Temperature Variable", required: true, defaultValue: "temperature"
-    input name: "pHVar", type: "text", title: "Spark pH Variable", required: true, defaultValue: "ph"
-    input name: "BattVar", type: "text", title: "Spark Heat Index Variable", required: true, defaultValue: "batteryLevel"
+    input name: "channelID", type: "text", title: "ThingSpeak Channel ID", required: true
+//    input name: "token", type: "password", title: "Access Token", required: true
+    input name: "TempVar", type: "text", title: "ThingSpeak Temp Field", required: true, defaultValue: "1"
+    input name: "pHVar", type: "text", title: "ThingSpeak pH Field", required: true, defaultValue: "2"
+    input name: "BattVar", type: "text", title: "ThingSpeak Battery Field", required: true, defaultValue: "4"
 }
 
 metadata {
-    definition (name: "Particle Pool Temperature and pH Logger", namespace: "jkeenest", author: "Jeremy Keen") {
+    definition (name: "ThingSpeak Pool Data Feed", namespace: "jkeenest", author: "Jeremy Keen") {
         capability "Polling"
         capability "Sensor"
         capability "Refresh"
         capability "Temperature Measurement"
+        capability "pH Measurement"
 
         attribute "temperature", "number"
+        attribute "pH", "number"
     }
 
     tiles(scale: 2) {
         valueTile("temperature", "device.temperature", width: 2, height: 2) {
             state("temperature", label:'${currentValue}°', unit:"F",
                 backgroundColors:[
-                    [value: 31, color: "#153591"],
-                    [value: 44, color: "#1e9cbb"],
-                    [value: 59, color: "#90d2a7"],
+                    [value: 62, color: "#153591"],
+                    [value: 66, color: "#1e9cbb"],
+                    [value: 70, color: "#90d2a7"],
                     [value: 74, color: "#44b621"],
-                    [value: 84, color: "#f1d801"],
-                    [value: 95, color: "#d04e00"],
-                    [value: 96, color: "#bc2323"]
+                    [value: 78, color: "#f1d801"],
+                    [value: 82, color: "#d04e00"],
+                    [value: 86, color: "#bc2323"]
                 ]
             )
         }
 
         valueTile("ph", "device.ph", width: 2, height: 2) {
-            state "default", label:'${currentValue}'
+            state( "pH", label:'${currentValue}',
+            	backgroundColors:[
+                	[value: 7.1, color: "#153591"],
+                    [value: 7.2, color: "#1e9cbb"],
+                    [value: 7.3, color: "#90d2a7"],
+                    [value: 7.5, color: "#44b621"],
+                    [value: 7.7, color: "#f1d801"],
+                    [value: 7.8, color: "#d04e00"],
+                    [value: 8.0, color: "#bc2323"]
+				]
+			)
         }
 
         valueTile("battery", "device.battery", width: 2, height: 2) {
@@ -59,8 +71,8 @@ metadata {
             state "default", action:"refresh.refresh", icon:"st.secondary.refresh"
         }
 
-        main "temperature"
-        details(["temperature", "pH", "batteryLevel", "refresh"])
+        main("temperature")
+        details(["temperature", "ph", "battery", "refresh"])
     }
 }
 
@@ -95,8 +107,7 @@ private getTemperature() {
 
         sendEvent(name: "temperature", value: response.data.result)
     }
-
-    httpGet("https://api.particle.io/v1/devices/${deviceId}/${TempVar}?access_token=${token}", closure)
+    httpGet("https://api.thingspeak.com/channels/${channelID}/fields/${TempVar}/last", closure)
 }
 
 private getPH() {
@@ -106,7 +117,7 @@ private getPH() {
         sendEvent(name: "ph", value: response.data.result)
     }
 
-    httpGet("https://api.particle.io/v1/devices/${deviceId}/${pHVar}?access_token=${token}", closure)
+    httpGet("https://api.thingspeak.com/channels/${channelID}/fields/${pHVar}/last", closure)
 }
 
 private getBattery() {
@@ -116,5 +127,5 @@ private getBattery() {
         sendEvent(name: "battery", value: response.data.result)
     }
 
-    httpGet("https://api.particle.io/v1/devices/${deviceId}/${BattVar}?access_token=${token}", closure)
+    httpGet("https://api.thingspeak.com/channels/${channelID}/fields/${BattVar}/last", closure)
 }
